@@ -7,6 +7,8 @@ setup(
     packages=find_packages(),
     install_requires=[
         'flask',
+        'flask-bootstrap',
+        'flask-wtforms',
         'gunicorn',
         'pandas',
         'psycopg2'

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DashBoard Ajna</title>
+</head>
+<body>
+<div id="main" class="container-fluid">
+    <div id="top" class="row col-sm-12">
+        <div class="form-group">
+            <form method="POST" id="formfiltro" action="/">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label for="status">Status da tarefa</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="datainicio">Início e fim de período de pesquisa</label>
+                    </div>
+                    <div class="col-sm-6">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-sm-2">
+                            {{ oform.status(class='form-control') }}
+                        </div>
+                        <div class="col-sm-2">
+                            {{ oform.datainicio(class='form-control') }}
+                        </div>
+                        <div class="col-sm-2">
+                            {{ oform.datafim(class='form-control') }}
+                        </div>
+                        <div class="col-sm-6">
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-sm-12">
+                    &nbsp;<br>
+                    <div class="col-sm-2">
+                        <button class="btn btn-default btn-info form-control" onclick="submit">
+                            Pesquisar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="list" class="row col-sm-12">
+        &nbsp;<br>
+        <div class="table">
+            <table class="inlineTable table table-bordered table-hover table-responsive"
+                   id="minhas_ovrs_table">
+                <thead>
+                <tr>
+                    <th></th>
+                    {% for col in dados[0].keys() %}
+                    <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for linha in dados %}
+                    {% for col in linha %}
+                    <td>{{ col }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
