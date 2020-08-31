@@ -18,15 +18,15 @@ print(df.head())
 app = Flask(__name__)
 
 @app.route('/')
-@app.route('/taigadash')
+@app.route('/taigadash/')
 def home():
-    return df.to_html
+    return df.to_html()
 
 
-@app.route('/taigadash_json')
+@app.route('/taigadash/json')
 def json():
     return df.to_json()
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5010)
