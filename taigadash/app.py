@@ -1,5 +1,6 @@
 import psycopg2
 import pandas as pd
+from flask import Flask
 
 SQL_ISSUES = '''
 select p.id, s.name, i.subject, i.created_date, i.modified_date from issues_issue i 
@@ -10,13 +11,13 @@ limit 10;
 
 con = psycopg2.connect(database='taiga', user='taiga_consulta')
 df = pd.read_sql(SQL_ISSUES, con=con)
-# cur = con.cursor()
-# cur.execute(SQL_ISSUES)
-# recset = cur.fetchall()
-# for rec in recset:
-#    print(rec)
 con.close()
-# print(df['name'].unique_values())
-# name = 'Concluido'
-# df[df['name'] == name]
 print(df.head())
+
+
+app = Flask(__name__)
+
+@app.route('/')
+@app.route('/taigadash')
+def home():
+    return df.to_html
