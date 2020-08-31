@@ -11,7 +11,7 @@ limit 10;
 
 con = psycopg2.connect(database='taiga', user='taiga_consulta')
 df = pd.read_sql(SQL_ISSUES, con=con)
-con.close()
+# con.close()
 print(df.head())
 
 
@@ -21,3 +21,8 @@ app = Flask(__name__)
 @app.route('/taigadash')
 def home():
     return df.to_html
+
+
+@app.route('/taigadash_json')
+def json():
+    return df.to_json()
