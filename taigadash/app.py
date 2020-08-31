@@ -7,7 +7,7 @@ inner join projects_taskstatus s on s.id = i.status_id
 limit 10;
 '''
 
-con = psycopg2.connect(host='localhost', database='taiga', user='taiga_consulta')
+con = psycopg2.connect(database='taiga', user='taiga_consulta')
 cur = con.cursor()
 cur.execute(SQL_ISSUES)
 recset = cur.fetchall()
