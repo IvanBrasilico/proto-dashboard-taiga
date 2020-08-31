@@ -26,3 +26,7 @@ def home():
 @app.route('/taigadash_json')
 def json():
     return df.to_json()
+
+
+if __name__ == '__main__':
+    app.run()

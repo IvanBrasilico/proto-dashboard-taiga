@@ -7,6 +7,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'flask',
+        'gunicorn',
         'pandas',
         'psycopg2'
     ],
