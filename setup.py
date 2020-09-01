@@ -7,9 +7,11 @@ setup(
     packages=find_packages(),
     install_requires=[
         'flask',
+        'flask-wtf',
         'gunicorn',
         'pandas',
-        'psycopg2'
+        'psycopg2',
+        'sqlalchemy'
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],

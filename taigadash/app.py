@@ -1,20 +1,28 @@
+import os
+import sqlite3
+
 import pandas as pd
 import psycopg2
 from flask import Flask
 
-SQL_ISSUES = '''
-select p.id, s.name, i.subject, i.created_date, i.modified_date from issues_issue i 
-inner join projects_project p on p.id = i.project_id
-inner join projects_taskstatus s on s.id = i.status_id
-limit 1000;
-'''
+from taigadash.db import SQL_ISSUES
 
-con = psycopg2.connect(database='taiga', user='taiga_consulta')
+if os.environ.get('DB'):
+    con = psycopg2.connect(database='taiga', user='taiga_consulta')
+else:
+    con = sqlite3.connect('testes.db')
 df = pd.read_sql(SQL_ISSUES, con=con)
 # con.close()
 print(df.head())
+print(df.to_dict())
 
-app = Flask(__name__)
+
+def create_app(df):
+    app = Flask(__name__)
+    app.config['df'] = df
+
+
+app = create_app(df)
 
 
 @app.route('/')
