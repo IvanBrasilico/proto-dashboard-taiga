@@ -14,10 +14,9 @@ if os.environ.get('DB'):
     con = psycopg2.connect(database='taiga', user='taiga_consulta')
 else:
     con = sqlite3.connect('testes.db')
-df = pd.read_sql(SQL_ISSUES, con=con)
+
+
 # con.close()
-print(df.head())
-print(df.to_dict())
 
 
 def filter_df(df, status):
@@ -27,10 +26,11 @@ def filter_df(df, status):
     return filtered_df
 
 
-def create_app(df):
+def create_app(con):
     app = Flask(__name__)
     csrf = CSRFProtect(app)
     Bootstrap(app)
+    df = pd.read_sql(SQL_ISSUES, con=con)
     app.config['df'] = df
     app.config['SECRET_KEY'] = os.urandom(32)
 
@@ -75,7 +75,6 @@ def create_app(df):
     return app
 
 
-app = create_app(df)
-
 if __name__ == '__main__':
+    app = create_app(con)
     app.run(port=5010, debug=True)

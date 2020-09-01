@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 
 from taigadash.app import create_app
 from taigadash.db import create_test_base, SQL_ISSUES
-from tests.test_base import RESULT_JSON
+from test_base import RESULT_JSON
 
 
 class AppTestCase(unittest.TestCase):
@@ -13,8 +13,8 @@ class AppTestCase(unittest.TestCase):
     def setUp(self) -> None:
         self.engine = create_engine('sqlite:///testes.db')
         create_test_base(self.engine)
-        df = pd.read_sql(SQL_ISSUES, con=self.engine)
-        app = create_app(df)
+        # df = pd.read_sql(SQL_ISSUES, con=self.engine)
+        app = create_app(self.engine)
         self.app = app.test_client()
 
     def test_taigadash_json(self):
