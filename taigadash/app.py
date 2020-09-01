@@ -3,7 +3,9 @@ import sqlite3
 
 import pandas as pd
 import psycopg2
-from flask import Flask
+from flask import Flask, request, render_template
+
+from taigadash.forms.filtro_form import FiltroForm
 
 from taigadash.db import SQL_ISSUES
 
@@ -25,15 +27,37 @@ def create_app(df):
 app = create_app(df)
 
 
+def filter_df(status):
+    filtered_df = df.copy()
+    if status:
+        filtered_df = filtered_df[filtered_df['name'] == status]
+
+
 @app.route('/')
 @app.route('/taigadash/')
 def home():
-    return df.to_html()
+    status = request.args.get('status')
+    filtered_df = filter_df(status)
+    return filtered_df.to_html()
+
+
+@app.route('/')
+@app.route('/taigadash/html')
+def html():
+    status = request.args.get('status')
+    oform = FiltroForm()
+    filtered_df = filter_df(status)
+
+    return render_template('home.html',
+                           oform=oform,
+                           dados=filtered_df.to_dict())
 
 
 @app.route('/taigadash/json')
 def json():
-    return df.to_json()
+    status = request.json.get('status')
+    filtered_df = filter_df(status)
+    return filtered_df.to_json()
 
 
 if __name__ == '__main__':
