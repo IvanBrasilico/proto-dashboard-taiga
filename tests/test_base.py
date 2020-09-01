@@ -26,7 +26,7 @@ RESULT_JSON = ''.join([
 class ModelTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.engine = create_engine('sqlite:///testes.db')
+        self.engine = create_engine('sqlite://')
         create_test_base(self.engine)
 
     def test_taigasqlissues_dict(self):
