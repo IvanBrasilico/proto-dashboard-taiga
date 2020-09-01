@@ -11,7 +11,7 @@ from tests.test_base import RESULT_JSON
 class AppTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.engine = create_engine('sqlite:///testes.db')
+        self.engine = create_engine('sqlite://')
         create_test_base(self.engine)
         df = pd.read_sql(SQL_ISSUES, con=self.engine)
         app = create_app(df)

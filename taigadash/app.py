@@ -10,7 +10,7 @@ from flask_wtf import CSRFProtect
 from taigadash.db import SQL_ISSUES
 from taigadash.forms.filtro_form import FiltroForm
 
-if os.environ.get('DB'):
+if os.environ.get('PRODUCTION'):
     con = psycopg2.connect(database='taiga', user='taiga_consulta')
 else:
     con = sqlite3.connect('testes.db')
