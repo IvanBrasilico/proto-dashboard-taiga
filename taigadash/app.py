@@ -4,6 +4,7 @@ import sqlite3
 import pandas as pd
 import psycopg2
 from flask import Flask, request, render_template, jsonify
+from flask_wtf import CSRFProtect
 
 from taigadash.db import SQL_ISSUES
 from taigadash.forms.filtro_form import FiltroForm
@@ -27,7 +28,10 @@ def filter_df(df, status):
 
 def create_app(df):
     app = Flask(__name__)
+    csrf = CSRFProtect(app)
+    # Bootstrap(app)
     app.config['df'] = df
+    app.config['SECRET_KEY'] = os.urandom(32)
 
     @app.route('/')
     @app.route('/taigadash/')
@@ -38,16 +42,24 @@ def create_app(df):
         return filtered_df.to_html()
 
     @app.route('/')
-    @app.route('/taigadash/html')
+    @app.route('/taigadash/html', methods=['POST', 'GET'])
     def html():
         df = app.config['df']
-        status = request.args.get('status')
+        status = None
         oform = FiltroForm()
+        if request.method == 'POST':
+            print(request.form)
+            oform = FiltroForm(request.form)
+            oform.validate()
+            status = oform.status.data
         filtered_df = filter_df(df, status)
-
+        print(status)
+        colunas = list(df.columns)
+        linhas = [list(row) for row in filtered_df.values]
         return render_template('home.html',
                                oform=oform,
-                               dados=filtered_df.to_dict())
+                               colunas=colunas,
+                               linhas=linhas)
 
     @app.route('/taigadash/json')
     def json():

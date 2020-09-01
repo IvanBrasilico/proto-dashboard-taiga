@@ -8,7 +8,7 @@
 <div id="main" class="container-fluid">
     <div id="top" class="row col-sm-12">
         <div class="form-group">
-            <form method="POST" id="formfiltro" action="/">
+            <form method="POST" id="formfiltro" action="/taigadash/html">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="row">
                     <div class="col-sm-2">
@@ -54,13 +54,13 @@
                 <thead>
                 <tr>
                     <th></th>
-                    {% for col in dados[0].keys() %}
+                    {% for col in colunas %}
                     <th>{{ col }}</th>
                     {% endfor %}
                 </tr>
                 </thead>
                 <tbody>
-                {% for linha in dados %}
+                {% for linha in linhas %}
                     {% for col in linha %}
                     <td>{{ col }}</td>
                     {% endfor %}
@@ -69,7 +69,6 @@
                 </tbody>
             </table>
         </div>
-        {% endfor %}
     </div>
 </body>
 </html>

@@ -87,6 +87,8 @@ if __name__ == '__main__':
     print(df.head())
     print(df.to_dict())
     print(df.to_json())
+    print(list(df.columns))
+    print([list(row) for row in df.values])
     """
     {'id': {0: 1, 1: 1, 2: 2}, 'name': {0: 'In Progress', 1: 'Ready for Test', 2: 'In Progress'},
      'subject': {0: 'Teste base de teste (p1 s1)', 1: 'Teste base de teste (p1 s2)', 2: 'Teste base de teste (p2 s1)'},
