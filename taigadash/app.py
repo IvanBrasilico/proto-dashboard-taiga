@@ -4,6 +4,7 @@ import sqlite3
 import pandas as pd
 import psycopg2
 from flask import Flask, request, render_template, jsonify
+from flask_bootstrap import Bootstrap
 from flask_wtf import CSRFProtect
 
 from taigadash.db import SQL_ISSUES
@@ -29,7 +30,7 @@ def filter_df(df, status):
 def create_app(df):
     app = Flask(__name__)
     csrf = CSRFProtect(app)
-    # Bootstrap(app)
+    Bootstrap(app)
     app.config['df'] = df
     app.config['SECRET_KEY'] = os.urandom(32)
 
@@ -54,7 +55,7 @@ def create_app(df):
             status = oform.status.data
         filtered_df = filter_df(df, status)
         print(status)
-        colunas = list(df.columns)
+        colunas = list(df.columns)[1:]
         linhas = [list(row) for row in filtered_df.values]
         return render_template('home.html',
                                oform=oform,
