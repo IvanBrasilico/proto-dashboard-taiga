@@ -5,9 +5,8 @@ import pandas as pd
 import psycopg2
 from flask import Flask, request, render_template
 
-from taigadash.forms.filtro_form import FiltroForm
-
 from taigadash.db import SQL_ISSUES
+from taigadash.forms.filtro_form import FiltroForm
 
 if os.environ.get('DB'):
     con = psycopg2.connect(database='taiga', user='taiga_consulta')
@@ -22,31 +21,35 @@ print(df.to_dict())
 def create_app(df):
     app = Flask(__name__)
     app.config['df'] = df
+    return app
 
 
 app = create_app(df)
 
 
-def filter_df(status):
+def filter_df(df, status):
     filtered_df = df.copy()
     if status:
         filtered_df = filtered_df[filtered_df['name'] == status]
+    return filtered_df
 
 
 @app.route('/')
 @app.route('/taigadash/')
 def home():
+    df = app.config['df']
     status = request.args.get('status')
-    filtered_df = filter_df(status)
+    filtered_df = filter_df(df, status)
     return filtered_df.to_html()
 
 
 @app.route('/')
 @app.route('/taigadash/html')
 def html():
+    df = app.config['df']
     status = request.args.get('status')
     oform = FiltroForm()
-    filtered_df = filter_df(status)
+    filtered_df = filter_df(df, status)
 
     return render_template('home.html',
                            oform=oform,
@@ -55,8 +58,9 @@ def html():
 
 @app.route('/taigadash/json')
 def json():
+    df = app.config['df']
     status = request.json.get('status')
-    filtered_df = filter_df(status)
+    filtered_df = filter_df(df, status)
     return filtered_df.to_json()
 
 
