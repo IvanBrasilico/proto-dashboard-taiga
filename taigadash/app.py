@@ -1,5 +1,6 @@
 import os
 import sqlite3
+from datetime import date
 
 import pandas as pd
 import psycopg2
@@ -34,9 +35,51 @@ def create_app(con):
     app.config['df'] = df
     app.config['SECRET_KEY'] = os.urandom(32)
 
+
     @app.route('/')
-    @app.route('/taigadash/')
+    @app.route('/taigadash/', methods=['GET', 'POST'])
     def home():
+        session = app.config.get('dbsession')
+        lista_relatorios = get_relatorios_choice(session)
+        linhas = []
+        linhas_formatadas = []
+        sql = ''
+        plot = ''
+        today = date.today()
+        inicio = date(year=today.year, month=today.month, day=1)
+        filtro_form = FiltroForm(
+            datainicio=inicio,
+            datafim=date.today(),
+            relatorios=lista_relatorios,
+        )
+        try:
+            if request.method == 'POST':
+                filtro_form = FiltroForm(request.form,
+                                                  relatorios=lista_relatorios)
+                filtro_form.validate()
+                relatorio = get_relatorio(session, int(filtro_form.relatorio.data))
+                if relatorio is None:
+                    raise ValueError('Relatório %s não encontrado' %
+                                     filtro_form.relatorio.data)
+                sql = relatorio.sql
+                linhas = executa_relatorio(session, current_user.name,
+                                           relatorio,
+                                           filtro_form.datainicio.data,
+                                           filtro_form.datafim.data,
+                                           filtrar_setor=True)
+                plot = bar_plotly(linhas, relatorio.nome)
+                linhas_formatadas = formata_linhas_relatorio(linhas)
+        except Exception as err:
+            logger.error(err, exc_info=True)
+            flash('Erro! Detalhes no log da aplicação.')
+            flash(str(type(err)))
+            flash(str(err))
+        return render_template('relatorios.html',
+                               oform=filtro_form,
+                               linhas=linhas_formatadas,
+                               sql=sql,
+                               plot=plot)
+
         df = app.config['df']
         status = request.args.get('status')
         filtered_df = filter_df(df, status)
