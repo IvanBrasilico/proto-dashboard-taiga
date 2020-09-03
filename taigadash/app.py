@@ -77,5 +77,5 @@ def create_app(df):
 
 app = create_app(df)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     app.run(port=5010, debug=True)

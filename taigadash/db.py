@@ -1,20 +1,42 @@
-from sqlalchemy import BigInteger, Column, VARCHAR, Integer, Date
+from sqlalchemy import BigInteger, Column, VARCHAR, Integer, Date, Text
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 SQL_ISSUES = '''
-select p.id, s.name, i.subject, i.created_date, i.modified_date from issues_issue i 
+select p.id, p.name as projeto, s.name as status, i.subject as descricao,
+ i.created_date, i.modified_date from issues_issue i 
+inner join projects_project p on p.id = i.project_id
+inner join projects_taskstatus s on s.id = i.status_id
+limit 1000;
+'''
+TASK_ISSUES = '''
+select p.id, p.name as projeto, s.name as status, t.subject as descricao,
+ i.created_date, i.modified_date from tasks_task i 
 inner join projects_project p on p.id = i.project_id
 inner join projects_taskstatus s on s.id = i.status_id
 limit 1000;
 '''
 
+relatorios = (
+    (1, 'Issues', SQL_ISSUES),
+    (2, 'Tarefas', TASK_ISSUES)
+)
+
 Base = declarative_base()
-
-
 class Issue(Base):
     __tablename__ = 'issues_issue'
+    id = Column(BigInteger().with_variant(Integer, 'sqlite'),
+                primary_key=True)
+    subject = Column(VARCHAR(100), index=True)
+    created_date = Column(Date, index=True)
+    modified_date = Column(Date, index=True)
+    project_id = Column(BigInteger().with_variant(Integer, 'sqlite'))
+    status_id = Column(BigInteger().with_variant(Integer, 'sqlite'))
+
+
+class Task(Base):
+    __tablename__ = 'tasks_task'
     id = Column(BigInteger().with_variant(Integer, 'sqlite'),
                 primary_key=True)
     subject = Column(VARCHAR(100), index=True)
@@ -36,6 +58,12 @@ class TaskStatus(Base):
     id = Column(BigInteger().with_variant(Integer, 'sqlite'),
                 primary_key=True)
     name = Column(VARCHAR(100), index=True)
+
+class Relatorio(Base):
+    __tablename__ = 'taiga_relatorios'
+    id = Column(BigInteger().with_variant(Integer, 'sqlite'), primary_key=True)
+    nome = Column(VARCHAR(200), index=True, nullable=False)
+    sql = Column(Text())
 
 
 def create_test_base(engine):
@@ -75,10 +103,32 @@ def create_test_base(engine):
     issue3.project_id = project2.id
     issue3.status_id = status.id
     session.add(issue3)
+    task = Task()
+    task.subject = 'Teste tarefa base de teste (p1 s1)'
+    task.project_id = project.id
+    task.status_id = status.id
+    session.add(task)
+    task2 = Task()
+    task2.subject = 'Teste tarefa base de teste (p2 s2)'
+    task2.project_id = project2.id
+    task2.status_id = status2.id
+    session.add(task2)
+    task3 = Task()
+    task3.subject = 'Teste tarefa base de teste (p2 s1)'
+    task3.project_id = project2.id
+    task3.status_id = status.id
+    session.add(task3)
     session.commit()
+    relatorio = Relatorio()
+    relatorio.nome = 'Issues com Status e Projeto'
+    relatorio.sql = SQL_ISSUES
+    session.add(relatorio)
+    relatorio = Relatorio()
+    relatorio.nome = 'Tarefas com Status e Projeto'
+    relatorio.sql = TASK_ISSUES
+    session.add(relatorio)
 
-
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     import pandas as pd
 
     engine = create_engine('sqlite:///testes.db')

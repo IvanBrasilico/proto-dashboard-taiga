@@ -6,17 +6,19 @@ from sqlalchemy import create_engine
 from taigadash.db import create_test_base, SQL_ISSUES
 
 RESULT = {'id': {0: 1, 1: 1, 2: 2},
-          'name': {0: 'In Progress', 1: 'Ready for Test', 2: 'In Progress'},
-          'subject': {0: 'Teste base de teste (p1 s1)',
-                      1: 'Teste base de teste (p1 s2)',
-                      2: 'Teste base de teste (p2 s1)'},
+          'projeto': {0: 'Teste1', 1: 'Teste1', 2: 'Teste2'},
+          'status': {0: 'In Progress', 1: 'Ready for Test', 2: 'In Progress'},
+          'descricao': {0: 'Teste base de teste (p1 s1)',
+                        1: 'Teste base de teste (p1 s2)',
+                        2: 'Teste base de teste (p2 s1)'},
           'created_date': {0: None, 1: None, 2: None},
           'modified_date': {0: None, 1: None, 2: None}}
 
 RESULT_JSON = ''.join([
     '{"id":{"0":1,"1":1,"2":2},',
-    '"name":{"0":"In Progress","1":"Ready for Test","2":"In Progress"},',
-    '"subject":{"0":"Teste base de teste (p1 s1)","1":"Teste base de teste (p1 s2)",',
+    '"projeto":{"0":"Teste1","1":"Teste1","2":"Teste2"},',
+    '"status":{"0":"In Progress","1":"Ready for Test","2":"In Progress"},',
+    '"descricao":{"0":"Teste base de teste (p1 s1)","1":"Teste base de teste (p1 s2)",',
     '"2":"Teste base de teste (p2 s1)"},',
     '"created_date":{"0":null,"1":null,"2":null},',
     '"modified_date":{"0":null,"1":null,"2":null}}'
