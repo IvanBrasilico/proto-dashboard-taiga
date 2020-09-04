@@ -12,7 +12,7 @@ select p.id, p.name as projeto, s.name as status, i.subject as descricao,
  i.created_date, i.modified_date from issues_issue i 
 inner join projects_project p on p.id = i.project_id
 inner join projects_taskstatus s on s.id = i.status_id
-WHERE i.created_date between "{}" and "{}"
+WHERE i.created_date between '{}' and '{}'
 limit 1000;
 '''
 TASK_ISSUES = '''
@@ -20,7 +20,7 @@ select p.id, p.name as projeto, s.name as status, t.subject as descricao,
  t.created_date, t.modified_date from tasks_task t 
 inner join projects_project p on p.id = t.project_id
 inner join projects_taskstatus s on s.id = t.status_id
-WHERE t.created_date between "{}" and "{}"
+WHERE t.created_date between '{}' and '{}'
 limit 1000;
 '''
 
