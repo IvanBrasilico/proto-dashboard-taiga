@@ -18,6 +18,7 @@ class AppTestCase(unittest.TestCase):
         self.app = app.test_client()
 
     def test_taigadash_json(self):
-        rv = self.app.get('/taigadash/json')
+        rv = self.app.get('/taigadash/json', json={'relatorio': 1})
+        print(rv.data)
         assert rv.status_code == 200
         assert rv.json == RESULT_JSON

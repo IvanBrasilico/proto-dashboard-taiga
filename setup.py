@@ -11,6 +11,7 @@ setup(
         'flask-wtf',
         'gunicorn',
         'pandas',
+        'plotly',
         'psycopg2',
         'sqlalchemy'
     ],

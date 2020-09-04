@@ -1,36 +1,50 @@
-{% extends "bootstrap/base.html" %}
-{% block title %}DashBoard Ajna{% endblock %}
-
-{% block content %}
-<body>
+{% extends "layout.html" %} {% block content %} {{super()}}
 <div id="main" class="container-fluid">
     <div id="top" class="row col-sm-12">
-        <div class="form-group">
-            <form method="POST" id="formfiltro" action="/taigadash/html">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <form method="POST" id="formfiltro" action="/taigadash/">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <div class="form-group row col-sm-12">
                 <div class="row">
+                    <div class="col-sm-4">
+                        <label for="relatorio">Tipo de relatório</label>
+                    </div>
+                    <div class="col-sm-8">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ oform.relatorio(class='form-control') }}
+                    </div>
+                    <div class="col-sm-8">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label for="status">Nome do projeto</label>
+                    </div>
                     <div class="col-sm-2">
                         <label for="status">Status da tarefa</label>
                     </div>
                     <div class="col-sm-4">
                         <label for="datainicio">Início e fim de período de pesquisa</label>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group">
-                        <div class="col-sm-2">
-                            {{ oform.status(class='form-control') }}
-                        </div>
-                        <div class="col-sm-2">
-                            {{ oform.datainicio(class='form-control') }}
-                        </div>
-                        <div class="col-sm-2">
-                            {{ oform.datafim(class='form-control') }}
-                        </div>
-                        <div class="col-sm-6">
-                        </div>
+                    <div class="col-sm-2">
+                        {{ oform.projeto(class='form-control') }}
+                    </div>
+                    <div class="col-sm-2">
+                        {{ oform.status(class='form-control') }}
+                    </div>
+                    <div class="col-sm-2">
+                        {{ oform.datainicio(class='form-control') }}
+                    </div>
+                    <div class="col-sm-2">
+                        {{ oform.datafim(class='form-control') }}
+                    </div>
+                    <div class="col-sm-4">
                     </div>
                 </div>
                 <div class="row col-sm-12">
@@ -41,8 +55,8 @@
                         </button>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
     <div id="list" class="row col-sm-12">
         &nbsp;<br>
@@ -53,20 +67,47 @@
                 <tr>
                     <th></th>
                     {% for col in colunas %}
-                    <th>{{ col }}</th>
+                    <th>{{ col }} (clique para ordenar)</th>
                     {% endfor %}
                 </tr>
                 </thead>
                 <tbody>
                 {% for linha in linhas %}
-                    {% for col in linha %}
-                    <td>{{ col }}</td>
-                    {% endfor %}
+                {% for col in linha %}
+                <td>{{ col }}</td>
+                {% endfor %}
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
-</body>
+    <div id="sql">
+        {{ sql }}
+    </div>
+    <div id="plot">
+        {{ plot | safe }}
+    </div>
+</div>
+{% endblock %}
+{% block scripts %} {{super()}}
+<script>
+
+    $('th').click(function(){
+    var table = $(this).parents('table').eq(0)
+    var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
+    this.asc = !this.asc
+    if (!this.asc){rows = rows.reverse()}
+    for (var i = 0; i < rows.length; i++){table.append(rows[i])}
+})
+function comparer(index) {
+    return function(a, b) {
+        var valA = getCellValue(a, index), valB = getCellValue(b, index)
+        return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+    }
+}
+function getCellValue(row, index){ return $(row).children('td').eq(index).text() }
+
+
+</script>
 {% endblock %}
